@@ -70,9 +70,13 @@ if __name__ == '__main__':
     env = Env()
     st = env.reset()
 
+    epsilon = 1
+    epsilon_decay = 0.995
+    epsilon_min = 0.01
+
     Q = np.zeros((10, 4))
 
-    for _ in range(100):
+    for episode in range(1000):
         # reset the game
         st = env.reset()
         while not env.is_finished():
@@ -82,10 +86,10 @@ if __name__ == '__main__':
             #print(f"state: {stp1} => r: {r}")
 
             #update the Q 
-            atp1 = take_action(stp1, Q, 0.0)
+            atp1 = take_action(stp1, Q, epsilon)
             Q[st][at] = Q[st][at] + 0.1*(r + 0.9*Q[stp1][atp1] - Q[st][at])
 
             st = stp1
-
+        epsilon= max(epsilon*epsilon_decay, epsilon_min )
     for s in range(1, 10):
         print(s, Q[s])  
